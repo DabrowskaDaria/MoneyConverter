@@ -1,0 +1,11 @@
+.btn-menu{
+    background-color: mediumpurple;
+    color: whitesmoke;
+    border-color: darkorchid;
+}
+
+.btn-menu:hover{
+    background-color: plum;
+    color: #DDDDDD;
+    border-color: mediumpurple;
+}
