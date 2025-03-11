@@ -1,11 +1,12 @@
 .btn-menu{
     background-color: mediumpurple;
-    color: whitesmoke;
+    color: #ffffff;
     border-color: darkorchid;
+    width: 100%;
 }
 
 .btn-menu:hover{
-    background-color: plum;
-    color: #DDDDDD;
+    background-color: #f169f1;
+    color: #ffffff;
     border-color: mediumpurple;
 }

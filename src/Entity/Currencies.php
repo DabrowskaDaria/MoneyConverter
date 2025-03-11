@@ -7,13 +7,21 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'currencies')]
 class Currencies
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
+
+    #[ORM\Column(type: 'string', length: 3)]
     private $name;
 
+    #[ORM\Column(type: 'float')]
     private $buyRate;
 
+    #[ORM\Column(type: 'float')]
     private $sellRate;
 
+    #[ORM\Column(type: 'integer')]
     private $spread;
 
     /**

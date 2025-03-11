@@ -4,21 +4,33 @@
 
 {% block body %}
 
-
-    <div class="d-flex justify-content-center align-items-center">
-        <h1>Przelicznik walut </h1>
-
-    </div>
-    <div class="d-flex justify-content-center align-items-center">
-        <h3> Witaj! Xyz</h3>
-    </div>
-    <div class="d-flex justify-content-center align-items-center flex-column">
-
-            <a href="#" class="btn btn-lg btn-menu mb-2">1. Pokaż tabelę walut</a><br>
-            <a href="#" class="btn btn-lg btn-menu mb-2">2. Przelicz z PLN na X</a><br>
-            <a href="#" class="btn btn-lg btn-menu mb-2">3. Przelicz z X na PLN</a><br>
-            <a href="#" class="btn btn-lg btn-menu mb-2">4. Sprawdź swoje działania</a><br>
-
+    <div class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Aplikacja przeliczania walut</a>
+        <div class="ms-auto d-flex gap-2">
+            <button class="btn btn-primary btn-menu">Zarejestruj się</button>
+            <button class="btn btn-primary btn-menu">Zaloguj się</button>
+        </div>
+        </div>
+        <div>
+            <tabel>
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Waluta</th>
+                    <th scope="col">Kurs kupna</th>
+                    <th scope="col">Kurs sprzedaży</th>
+                    <th scope="col">Różnica</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </tabel>
+        </div>
 
     </div>
 {% endblock %}
