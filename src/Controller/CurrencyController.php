@@ -26,7 +26,7 @@ class CurrencyController extends AbstractController
             $currency->setName($currencyData['name']);
             $currency->setBuyRate($currencyData['buyRate']);
             $currency->setSellRate($currencyData['sellRate']);
-            $rateDifference = $currencyData['buyRate'] - $currencyData['sellRate'];
+            $rateDifference = round($currencyData['sellRate'] - $currencyData['buyRate'],3);
             $currency->setSpread($rateDifference);
             $entityManager->persist($currency);
         }

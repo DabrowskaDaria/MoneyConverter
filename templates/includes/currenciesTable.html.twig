@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<div class="container mt-4">
+    <h5>Kursy walut z dnia: </h5>
+    <table class="table table-bordered">
+        <thead class="table-header">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Waluta</th>
+            <th scope="col">Kurs kupna</th>
+            <th scope="col">Kurs sprzedaży</th>
+            <th scope="col">Różnica</th>
+        </tr>
+        </thead>
+        <tbody>
+        {%  for currency in currencies %}
+        <tr>
+            <td>{{ currency.id }}</td>
+            <td>{{ currency.name }}</td>
+            <td>{{ currency.buyRate }}</td>
+            <td>{{ currency.sellRate }}</td>
+            <td>{{ currency.spread }}</td>
+        </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

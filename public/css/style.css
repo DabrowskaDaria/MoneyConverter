@@ -1,12 +1,27 @@
 .btn-menu{
     background-color: mediumpurple;
-    color: #ffffff;
-    border-color: darkorchid;
-    width: 100%;
+    border-color: #7E53DCFF;
+    width: 200px;
+    font-weight: bold;
 }
 
 .btn-menu:hover{
-    background-color: #f169f1;
-    color: #ffffff;
-    border-color: mediumpurple;
+    background-color: #A782F1FF;
+    border-color: #ffffff;
+}
+
+.table-header th{
+    background-color: #a782f1;
+}
+
+.btn-exchange {
+    background-color: mediumpurple;
+    border-color: #7e53dcff;
+    border-radius: 5px;
+    font-weight: bold;
+    width: 200px;
+}
+
+.dropdown-menu .dropdown-item:active {
+    background-color: mediumpurple ;
 }
