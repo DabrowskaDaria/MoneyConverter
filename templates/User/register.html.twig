@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+
+    {% include 'includes/header.html.twig' %}
+
+    <div class="container d-flex justify-content-center mt-4">
+        <div class="d-flex flex-column gap-2 border rounded p-5 shadow w-50" >
+            <h2 class="text-center">Zarejestruj się</h2>
+
+            <div class="form-floating">
+                <input type="text" id="name" placeholder="Imię" class="form-control">
+                <label for="name">Imię</label>
+            </div>
+            <div class="form-floating">
+                <input type="text" class="form-control" placeholder="Nazwisko" id="surname">
+                <label for="surname">Nazwisko</label>
+            </div>
+            <div class="form-floating ">
+                <input type="email" placeholder="name@example.com" class="form-control" id="email">
+                <label for="email">Adres e-mail</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="password" placeholder="Hasło" aria-describedby="passwordHelpBlock">
+                <label for="password">Hasło</label>
+                <div id="passwordHelpBlock" class="form-text">
+                    Hasło musi mieć 12 znaków, 2 znaki specjalne, 4 duże litery i 3 cyfry. Nie może zawierać @,4,X,c.
+                </div>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-register-login-remindPassword">Zarejestruj się</button>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+
+    <div class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{{ path('app_home') }}"><b>Aplikacja przeliczania walut</b></a>
+            <div class="ms-auto d-flex gap-2">
+                <a href="{{path('registerUser')}}" class="btn btn-menu">Zarejestruj się</a>
+                <a href="{{path('login')}}" class="btn btn-menu">Zaloguj się</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

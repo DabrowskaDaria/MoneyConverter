@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {% include '/includes/header.html.twig' %}
+    <div class="container d-flex justify-content-center mt-4">
+        <div class="d-flex flex-column gap-2 border rounded p-5 shadow w-50 mt-5" >
+            <h2 class="text-center">Zaloguj się</h2>
+            <div class="form-floating">
+                <input type="email" id="email" class="form-control" placeholder="E-mail">
+                <label for="email">Adres e-mail</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" id="password" class="form-control" placeholder="Hasło">
+                <label for="password">Hasło</label>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-register-login-remindPassword">Zaloguj się</button>
+            </div>
+            <div>
+                <a href="{{path('remindPassword')}}" class="btn remindPassword">Przypomnij hasło</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

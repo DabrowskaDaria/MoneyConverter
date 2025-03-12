@@ -10,24 +10,24 @@ class Currencies
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
     #[ORM\Column(type: 'string', length: 3)]
-    private $name;
+    private string $name;
 
     #[ORM\Column(type: 'float')]
-    private $buyRate;
+    private float $buyRate;
 
     #[ORM\Column(type: 'float')]
-    private $sellRate;
+    private float $sellRate;
 
     #[ORM\Column(type: 'float')]
-    private $spread;
+    private float $spread;
 
     /**
      * @return mixed
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -35,7 +35,7 @@ class Currencies
     /**
      * @param mixed $id
      */
-    public function setId($id): void
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -43,7 +43,7 @@ class Currencies
     /**
      * @return mixed
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -51,7 +51,7 @@ class Currencies
     /**
      * @param mixed $name
      */
-    public function setName($name): void
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -59,7 +59,7 @@ class Currencies
     /**
      * @return mixed
      */
-    public function getBuyRate()
+    public function getBuyRate(): float
     {
         return $this->buyRate;
     }
@@ -67,7 +67,7 @@ class Currencies
     /**
      * @param mixed $buyRate
      */
-    public function setBuyRate($buyRate): void
+    public function setBuyRate(float $buyRate): void
     {
         $this->buyRate = $buyRate;
     }
@@ -75,7 +75,7 @@ class Currencies
     /**
      * @return mixed
      */
-    public function getSellRate()
+    public function getSellRate(): float
     {
         return $this->sellRate;
     }
@@ -83,7 +83,7 @@ class Currencies
     /**
      * @param mixed $sellRate
      */
-    public function setSellRate($sellRate): void
+    public function setSellRate(float $sellRate): void
     {
         $this->sellRate = $sellRate;
     }
@@ -91,7 +91,7 @@ class Currencies
     /**
      * @return mixed
      */
-    public function getSpread()
+    public function getSpread(): float
     {
         return $this->spread;
     }
@@ -99,7 +99,7 @@ class Currencies
     /**
      * @param mixed $spread
      */
-    public function setSpread($spread): void
+    public function setSpread(float $spread): void
     {
         $this->spread = $spread;
     }

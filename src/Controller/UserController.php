@@ -11,17 +11,35 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
-    #[Route('/register', name: ' registerUser')]
+    #[Route('/register', name: 'registerUser')]
     public function register(UserRepository $userRepository) : Response
     {
-        $user = new User();
-        $user->setName('Jan');
-        $user->setSurname('Kowalski');
-        $user->setEmail('kowalskixz@gmail.com');
-        $user->setPassword(password_hash('kowalski', PASSWORD_DEFAULT));
-        $user->setToken('ewewe');
-        $user->setActive(false);
-        $userRepository->save($user);
-        return new Response('Użytkownik został zapisany');
+        //$user = new User('Jan','Kowalski','kowalskixsz@gmail.com',password_hash('kowalski', PASSWORD_DEFAULT),'ewwewe',false);
+        //$userRepository->save($user);
+        return $this->render('User/register.html.twig');
+    }
+
+    #[Route('/login', name:'login')]
+    public function login(): Response
+    {
+        return $this->render('User/login.html.twig');
+    }
+
+    #[Route('/remindPassword',name: 'remindPassword')]
+    public function remindPassword() : Response
+    {
+        return $this->render('User/remindPassword.html.twig');
+    }
+
+    #[Route('/resetPassword', name: 'resetPassword')]
+    public function resetPassword():Response
+    {
+        return $this->render('USer/resetPassword.html.twig');
+    }
+
+    #[Route('/userActivity', name: 'userActivity')]
+    public function showUserActivity(): Response
+    {
+        return $this->render('User/userActivity.html.twig');
     }
 }

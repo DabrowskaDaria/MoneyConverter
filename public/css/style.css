@@ -1,27 +1,68 @@
-.btn-menu{
-    background-color: mediumpurple;
-    border-color: #7E53DCFF;
-    width: 200px;
-    font-weight: bold;
+.navbar{
+    height: 80px;
 }
 
-.btn-menu:hover{
-    background-color: #A782F1FF;
-    border-color: #ffffff;
+.btn-menu{
+    background-color: #b399f4;
+    border-color: #a88bfa;
+    width: 200px;
+    border-radius: 10px;
+}
+
+.btn-exchange:hover, .btn-menu:hover{
+    background-color: #dbcbfa;
 }
 
 .table-header th{
-    background-color: #a782f1;
+    background-color: #b399f4;
 }
 
 .btn-exchange {
-    background-color: mediumpurple;
-    border-color: #7e53dcff;
-    border-radius: 5px;
-    font-weight: bold;
+    background-color: #b399f4;
+    border-color: #a88bfa;
+    border-radius: 10px;
     width: 200px;
 }
 
 .dropdown-menu .dropdown-item:active {
-    background-color: mediumpurple ;
+    background-color: #b399f4 ;
+}
+
+.form-control:focus {
+    border-color: #b399f4;
+    box-shadow: 0 0 5px rgb(157, 123, 243);
+}
+
+.btn-register-login-remindPassword{
+    background-color: #b399f4;
+    border-color: #a88bfa;
+    width: 100%;
+    border-radius: 10px;
+    height: 55px;
+}
+
+.btn-register-login-remindPassword:hover{
+    background-color: #dbcbfa;
+
+}
+
+h2{
+    color: #b399f4;
+    font-weight: bold;
+
+}
+
+.remindPassword{
+    color: #b399f4;
+    text-decoration: none;
+    font-size: large;
+}
+
+.remindPassword:hover{
+    color: #750cef;
+}
+
+.text-remindPassword{
+    color: rgba(71, 69, 69, 0.93);
+    font-size: smaller;
 }

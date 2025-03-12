@@ -10,30 +10,49 @@ class User
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
     #[ORM\Column(type: 'string')]
-    private $name;
+    private string $name;
 
     #[ORM\Column(type: 'string')]
-    private $surname;
+    private string $surname;
 
     #[ORM\Column(type: 'string')]
-    private $email;
+    private string $email;
 
     #[ORM\Column(type: 'string')]
-    private $password;
+    private string $password;
 
     #[ORM\Column(type: 'string')]
-    private $token;
+    private string $token;
 
     #[ORM\Column(type: 'boolean')]
-    private $active;
+    private bool $active;
+
+    /**
+     * @param string $name
+     * @param string $surname
+     * @param string $email
+     * @param string $password
+     * @param string $token
+     * @param bool $active
+     */
+    public function __construct(string $name, string $surname, string $email, string $password, string $token, bool $active)
+    {
+        $this->name = $name;
+        $this->surname = $surname;
+        $this->email = $email;
+        $this->password = $password;
+        $this->token = $token;
+        $this->active = $active;
+    }
+
 
     /**
      * @return mixed
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -41,7 +60,7 @@ class User
     /**
      * @param mixed $id
      */
-    public function setId($id): void
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -49,7 +68,7 @@ class User
     /**
      * @return mixed
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -57,7 +76,7 @@ class User
     /**
      * @param mixed $name
      */
-    public function setName($name): void
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -65,7 +84,7 @@ class User
     /**
      * @return mixed
      */
-    public function getSurname()
+    public function getSurname(): string
     {
         return $this->surname;
     }
@@ -73,7 +92,7 @@ class User
     /**
      * @param mixed $surname
      */
-    public function setSurname($surname): void
+    public function setSurname(string $surname): void
     {
         $this->surname = $surname;
     }
@@ -81,7 +100,7 @@ class User
     /**
      * @return mixed
      */
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -89,7 +108,7 @@ class User
     /**
      * @param mixed $email
      */
-    public function setEmail($email): void
+    public function setEmail(string $email): void
     {
         $this->email = $email;
     }
@@ -97,7 +116,7 @@ class User
     /**
      * @return mixed
      */
-    public function getPassword()
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -105,7 +124,7 @@ class User
     /**
      * @param mixed $password
      */
-    public function setPassword($password): void
+    public function setPassword(string $password): void
     {
         $this->password = $password;
     }
@@ -113,7 +132,7 @@ class User
     /**
      * @return mixed
      */
-    public function getToken()
+    public function getToken(): string
     {
         return $this->token;
     }
@@ -121,7 +140,7 @@ class User
     /**
      * @param mixed $token
      */
-    public function setToken($token): void
+    public function setToken(string $token): void
     {
         $this->token = $token;
     }
@@ -129,7 +148,7 @@ class User
     /**
      * @return mixed
      */
-    public function getActive()
+    public function getActive(): bool
     {
         return $this->active;
     }
@@ -137,7 +156,7 @@ class User
     /**
      * @param mixed $active
      */
-    public function setActive($active): void
+    public function setActive(bool $active): void
     {
         $this->active = $active;
     }
