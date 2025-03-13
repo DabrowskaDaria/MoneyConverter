@@ -34,7 +34,7 @@ class UserController extends AbstractController
     #[Route('/resetPassword', name: 'resetPassword')]
     public function resetPassword():Response
     {
-        return $this->render('USer/resetPassword.html.twig');
+        return $this->render('User/resetPassword.html.twig');
     }
 
     #[Route('/userActivity', name: 'userActivity')]

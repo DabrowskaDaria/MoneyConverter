@@ -9,7 +9,7 @@
     border-radius: 10px;
 }
 
-.btn-exchange:hover, .btn-menu:hover{
+.btn-exchange:hover, .btn-menu:hover, .btn-calculate:hover{
     background-color: #dbcbfa;
 }
 
@@ -49,7 +49,6 @@
 h2{
     color: #b399f4;
     font-weight: bold;
-
 }
 
 .remindPassword{
@@ -65,4 +64,15 @@ h2{
 .text-remindPassword{
     color: rgba(71, 69, 69, 0.93);
     font-size: smaller;
+}
+
+label{
+    font-size: 14px;
+}
+
+.btn-calculate{
+    background-color: #b399f4;
+    border-color: #a88bfa;
+    width: 100%;
+    border-radius: 10px;
 }

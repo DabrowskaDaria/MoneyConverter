@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+{% include 'includes/headerUser.html.twig' %}
+<div class="container justify-content-center mt-4 w-50">
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title text-center">Kup walutę</h3>
+            <div class="row">
+                <div class="col-6 mt-2">
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="money" min="1" value="1">
+                        <label for="money">Ilość</label>
+                    </div>
+                </div>
+                <div class="col-6 mt-2">
+                    <div class="form-floating">
+                        <select class="form-select form-control" id="currency">
+                            <option selected disabled> Wybierz walutę</option>
+                            {% for name in currenciesName %}
+                                <option value="{{ name }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="currency">Waluta</label>
+                    </div>
+                </div>
+                <div class="col-12 d-flex justify-content-center mt-2">
+                    <input type="submit" class="btn btn-calculate" value="Oblicz" id="calculate">
+                </div>
+                <div class="col">
+                    <p class="text-center mt-2" id="result"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById('calculate').addEventListener('click',function(){
+        const money=parseFloat(document.getElementById('money').value);
+        const currency=document.getElementById('currency').value;
+
+        fetch(`/currencyBuyRate?currency=${currency}`)
+            .then(response=>response.json())
+            .then(data=>{
+                if(data.error){
+                    document.getElementById('result').textContent=data.error;
+                }else{
+                    const buyRate=data.buyRate;
+                    const result= money/buyRate;
+                    document.getElementById('result').textContent=`Wynik: ${result.toFixed(2)} ${currency}`;
+                }
+            })
+            .catch(error =>{
+                console.error('Błąd: ',error);
+                document.getElementById('result').textContent='Wystąpił błąd podczas pobierania kursu walut';
+            });
+    });
+</script>
+
+{% endblock %}
