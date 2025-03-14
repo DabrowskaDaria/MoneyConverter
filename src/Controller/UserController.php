@@ -3,20 +3,45 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\RegisterForm;
+use App\Model\UserDTO;
 use App\Repository\UserRepository;
 
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
     #[Route('/register', name: 'registerUser')]
-    public function register(UserRepository $userRepository) : Response
+    public function register(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher) : Response
     {
-        //$user = new User('Jan','Kowalski','kowalskixsz@gmail.com',password_hash('kowalski', PASSWORD_DEFAULT),'ewwewe',false);
-        //$userRepository->save($user);
-        return $this->render('User/register.html.twig');
+        $userDTO= new UserDTO();
+        $form=$this->createForm(RegisterForm::class, $userDTO);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+
+            $user= new User(
+                $userDTO->getName(),
+                $userDTO ->getSurname(),
+                $userDTO->getEmail(),
+                "",
+                "",
+                false
+            );
+            $hashedPassword=$passwordHasher->hashPassword($user, $userDTO->getPassword());
+            $user->setPassword($hashedPassword);
+            $userRepository->save($user);
+            return $this->redirectToRoute('registerUser');
+        }
+
+        return $this->render('User/register.html.twig',[
+            'form'=>$form->createView(),
+        ]);
     }
 
     #[Route('/login', name:'login')]
