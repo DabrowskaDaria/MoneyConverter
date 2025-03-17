@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class CurrencyController extends AbstractController
 {
@@ -38,6 +39,7 @@ class CurrencyController extends AbstractController
     }
 
     #[Route('/exchangeXtoPLN', name: 'exchangeXtoPLN')]
+    #[IsGranted('ROLE_USER')]
     public function exchangeXtoPLN(CurrencyRepository $currencyRepository): Response
     {
         $currenciesName=$currencyRepository->findAllCurrenciesName();
@@ -46,6 +48,7 @@ class CurrencyController extends AbstractController
     }
 
     #[Route('/exchangePLNtoX', name: 'exchangePLNtoX')]
+    #[IsGranted('ROLE_USER')]
     public function exchangePLNtoX(CurrencyRepository $currencyRepository): Response
     {
         $currenciesName=$currencyRepository->findAllCurrenciesName();

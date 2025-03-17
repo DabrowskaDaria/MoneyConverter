@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class HomeController extends AbstractController
 {
@@ -21,6 +22,7 @@ class HomeController extends AbstractController
     }
 
     #[Route('/homePageForUser', name: 'homePageForUser')]
+    #[IsGranted('ROLE_USER')]
     public function homePageForUser(EntityManagerInterface $entityManager): Response
     {
         $curencies=$entityManager->getRepository(Currencies::class)->findAll();

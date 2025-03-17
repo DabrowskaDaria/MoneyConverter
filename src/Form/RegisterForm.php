@@ -34,7 +34,7 @@ class RegisterForm extends AbstractType
             ])
             -> add('submit', SubmitType::class,[
                 'label' => 'Zarejestruj się',
-                'attr' =>['class' => 'btn btn-register-login-remindPassword']
+                'attr' =>['class' => 'btn btn-register-login-remindPassword mt-2']
             ]);
     }
 

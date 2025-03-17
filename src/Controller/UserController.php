@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class UserController extends AbstractController
 {
@@ -44,11 +46,11 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/login', name:'login')]
+    /*#[Route('/login', name:'login')]
     public function login(): Response
     {
         return $this->render('User/login.html.twig');
-    }
+    }*/
 
     #[Route('/remindPassword',name: 'remindPassword')]
     public function remindPassword() : Response
@@ -63,8 +65,30 @@ class UserController extends AbstractController
     }
 
     #[Route('/userActivity', name: 'userActivity')]
+    #[IsGranted('ROLE_USER')]
     public function showUserActivity(): Response
     {
         return $this->render('User/userActivity.html.twig');
+    }
+
+    #[\Symfony\Component\Routing\Attribute\Route(path: '/login', name: 'app_login')]
+    public function login(AuthenticationUtils $authenticationUtils): Response
+    {
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('User/login.html.twig', [
+            'last_username' => $lastUsername,
+            'error' => $error,
+        ]);
+    }
+
+    #[Route(path: '/logout', name: 'app_logout')]
+    public function logout(): void
+    {
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 }
