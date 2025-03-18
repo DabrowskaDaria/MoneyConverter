@@ -3,6 +3,13 @@
     {% include '/includes/header.html.twig' %}
     <div class="container d-flex justify-content-center mt-4">
         <div class="d-flex flex-column gap-2 border rounded p-5 shadow w-50 mt-5" >
+            {% if app.flashes('error') %}
+                <div class="alert alert-danger">
+                    {% for message in app.flashes('error') %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
             <h2 class="text-center">Zaloguj się</h2>
             <form method="post">
             {% if error %}

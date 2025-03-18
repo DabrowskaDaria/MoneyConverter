@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Currencies;
+use App\Service\EmailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,5 +31,18 @@ class HomeController extends AbstractController
             'currencies'=>$curencies,
         ]);
     }
+
+    #[Route('/test-email', name: 'test_email')]
+    public function testEmail(EmailService $emailService): Response
+    {
+        $emailService->sendMail(
+            'daria.dabrowska@yellows.eu',
+            'Testowy e-mail',
+            '<p>To jest testowy e-mail wysłany z Symfony.</p>'
+        );
+
+        return new Response('E-mail został wysłany!');
+    }
+
 
 }

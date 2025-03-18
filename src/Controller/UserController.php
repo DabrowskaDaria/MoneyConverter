@@ -8,11 +8,14 @@ use App\Model\UserDTO;
 use App\Repository\UserRepository;
 
 
+use App\Service\EmailService;
+use App\Token;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
@@ -52,16 +55,70 @@ class UserController extends AbstractController
         return $this->render('User/login.html.twig');
     }*/
 
-    #[Route('/remindPassword',name: 'remindPassword')]
-    public function remindPassword() : Response
+    #[Route('/remindPassword', name: 'remindPassword',methods: ['GET'])]
+    public function remindPasswordForm() : Response
     {
         return $this->render('User/remindPassword.html.twig');
     }
 
-    #[Route('/resetPassword', name: 'resetPassword')]
-    public function resetPassword():Response
+    #[Route('/remindPassword',name: 'remindPassword_post', methods: ['POST'])]
+    public function remindPassword(Request $request,UserRepository $userRepository, EmailService $emailService, Token $token,UrlGeneratorInterface $urlGenerator) : Response
+    {
+        $email=$request->request->get('email');
+        $user=$userRepository->findOneByEmail($email);
+        if(!$user){
+            $this->addFlash('info','Nie znaleziono użytkownika z takim adresem e-mail.');
+            return $this->redirectToRoute('remindPassword');
+        }
+        $token=$token->generateToken($user,$userRepository);
+        $resetLink=$urlGenerator->generate('resetPassword',['token'=>$token],UrlGeneratorInterface::ABSOLUTE_URL);
+
+        //$content=sprintf("<p> Witaj!!<br> Kliknij w link, aby zresetować hasło: </p><a href='%s' >Resetuj hasło</a>",$resetLink);
+
+        $emailService->sendMail($user->getEmail(),'Resetowanie hasła',$user->getName(), $user->getSurname(),$resetLink);
+
+        $this->addFlash('success', 'E-mail z instrukcjami resetowania hasła został wysłany.');
+        return $this->redirectToRoute('remindPassword');
+    }
+
+
+    #[Route('/resetPassword', name:'resetPassword', methods: ['GET'])]
+    public function resetPasswordForm() : Response
     {
         return $this->render('User/resetPassword.html.twig');
+    }
+
+    #[Route('/resetPassword', name: 'resetPassword_post', methods: ['POST'])]
+    public function resetPassword(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher):Response
+    {
+        $token=$request->query->get('token');
+        $user=$userRepository->findOneByToken($token);
+        if(!$user)
+        {
+            $this->addFlash('error', 'Token jest niepoprawny');
+            return $this->redirectToRoute('login');
+        }
+
+        if($user->getTokenExpiresAt()< new \DateTime()){
+            $this->addFlash('error', 'Token wygasł');
+            return $this->redirectToRoute('login');
+        }
+
+        $password=$request->request->get('password');
+        $repeatPassword=$request->request->get('repeatPassword');
+
+        if($password!==$repeatPassword){
+            $this->addFlash('error', "Wprowadź identyczne hasła.");
+            return $this->redirectToRoute('resetPassword');
+        }
+
+
+        $user->setPassword($passwordHasher->hashPassword($user,$password));
+        $user->setToken('');
+        $user->setTokenExpiresAt(null);
+        $userRepository->save($user);
+        $this->addFlash('success', "Hasło zostało zmienione.");
+        return $this->redirectToRoute('resetPassword');
     }
 
     #[Route('/userActivity', name: 'userActivity')]

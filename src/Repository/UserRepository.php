@@ -20,4 +20,14 @@ class UserRepository extends ServiceEntityRepository
         $entityManager->persist($user);
         $entityManager->flush();
     }
+
+    public function findOneByEmail(String $email)
+    {
+        return $this->findOneBy(['email' => $email]);
+    }
+
+    public function findOneByToken(String $token)
+    {
+        return $this->findOneBy(['token' => $token]);
+    }
 }
