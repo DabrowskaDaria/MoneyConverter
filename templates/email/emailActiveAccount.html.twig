@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+{%  block body %}
+    {% apply inline_css %}
+        <style>
+            .btn-activateAccount{
+                display: inline-block;
+                border-radius: 10px;
+                width: 200px;
+                height: 40px;
+                color: black;
+                font-size: 14px;
+                background-color: #a88bfa;
+                text-decoration: none;
+                text-align: center;
+                padding: 10px 20px;
+            }
+
+            p{
+                font-size: 15px;
+            }
+        </style>
+
+        <h2>Witaj, {{ name }} {{ surname }}</h2>
+        <p>Aktywuj swoje konto!</p>
+        <a href="{{ link }}" class="btn-activateAccount">Aktywuj konto</a>
+    {% endapply %}
+{% endblock %}

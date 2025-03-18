@@ -16,7 +16,7 @@ class EmailService
         $this->mailer = $mailer;
     }
 
-    public function sendMail(string $to,string $subject, string $name, string $surname, string $link): void
+    public function sendMail(string $to,string $subject, string $name, string $surname, string $link, string $template): void
     {
       /*$resetLink= sprintf(
           'http://127.0.0.1:8000/remindPassword/%s',
@@ -26,7 +26,7 @@ class EmailService
           ->from('daria.dabrowska@yellows.eu')
           ->to($to)
           ->subject($subject)
-          ->htmlTemplate('email/emailResetPassword.html.twig')
+          ->htmlTemplate($template)
           ->context(['name' => $name,
               'surname' => $surname,
               'link' => $link]);
