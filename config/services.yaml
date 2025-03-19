@@ -6,6 +6,7 @@
 parameters:
 
 services:
+
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -20,5 +21,12 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+
+    App\EventListener\ControllerLoggerListener:
+        arguments:
+            $requestStack: '@request_stack'
+            $logFile: '%kernel.project_dir%/var/data/data.csv'
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller,method: onKernelController }
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

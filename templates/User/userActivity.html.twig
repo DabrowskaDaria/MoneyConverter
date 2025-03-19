@@ -11,9 +11,17 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td></td>
-            </tr>
+            {% set count = 1  %}
+            {%  for row in data %}
+                {% if row[1] != 'Niezalogowany'%}
+                    <tr>
+                        <td>{{ count }}</td>
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[2] }}</td>
+                    </tr>
+                    {% set count = count + 1 %}
+                {% endif %}
+            {% endfor %}
             </tbody>
         </table>
     </div>

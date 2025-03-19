@@ -179,7 +179,18 @@ class UserController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function showUserActivity(): Response
     {
-        return $this->render('User/userActivity.html.twig');
+        $path="C:/xampp/htdocs/MoneyConverter/var/data/data.csv";
+        $data=[];
+        if(file_exists($path)){
+            $file=fopen($path,"r");
+            while(($row=fgetcsv($file,1000,','))!==false ){
+                $data[]=$row;
+            }
+            fclose($file);
+        }
+        return $this->render('User/userActivity.html.twig',[
+            'data'=>$data,
+        ]);
     }
 
     #[\Symfony\Component\Routing\Attribute\Route(path: '/login', name: 'app_login')]
@@ -202,4 +213,5 @@ class UserController extends AbstractController
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
+
 }
