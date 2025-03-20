@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Model\UserDTO;
@@ -16,25 +18,28 @@ class RegisterForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
-            'name', TextType::class,[
+            'name',
+            TextType::class,
+            [
                 'label' => 'Imię',
-                'attr'=>['class'=>'form-control', 'id' => 'name']
-            ])
-            ->add( 'surname',TextType::class,[
+                'attr' => ['class' => 'form-control', 'id' => 'name']
+            ]
+        )
+            ->add('surname', TextType::class, [
                 'label' => 'Nazwisko',
-                'attr' => ['class'=>'form-control']
+                'attr' => ['class' => 'form-control']
             ])
-            ->add('email',EmailType::class,[
-                'label' =>'E-mail',
+            ->add('email', EmailType::class, [
+                'label' => 'E-mail',
                 'attr' => ['class' => "form-control"]
             ])
-            ->add('password',PasswordType::class,[
+            ->add('password', PasswordType::class, [
                 'label' => 'Hasło',
-                'attr' =>   ['class' => "form-control"]
+                'attr' => ['class' => "form-control"]
             ])
-            -> add('submit', SubmitType::class,[
+            ->add('submit', SubmitType::class, [
                 'label' => 'Zarejestruj się',
-                'attr' =>['class' => 'btn btn-register-login-remindPassword mt-2']
+                'attr' => ['class' => 'btn btn-register-login-remindPassword mt-2']
             ]);
     }
 

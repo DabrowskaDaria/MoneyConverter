@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity]
-#[ORM\Table(name:'users')]
+#[ORM\Table(name: 'users')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -36,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private bool $active;
 
     #[ORM\Column(type: 'json')]
-    private array $roles=[];
+    private array $roles = [];
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $tokenExpiresAt = null;
@@ -49,8 +52,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @param string $token
      * @param bool $active
      */
-    public function __construct(string $name, string $surname, string $email, string $password, string $token, bool $active)
-    {
+    public function __construct(
+        string $name,
+        string $surname,
+        string $email,
+        string $password,
+        string $token,
+        bool $active
+    ) {
         $this->name = $name;
         $this->surname = $surname;
         $this->email = $email;
@@ -175,7 +184,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        $roles= $this ->roles;
+        $roles = $this->roles;
         $roles[] = "ROLE_USER";
         return array_unique($roles);
     }
@@ -187,7 +196,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     public function getTokenExpiresAt(): ?\DateTimeInterface

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\EventListener;
 
 use Symfony\Bundle\SecurityBundle\Security;
@@ -31,27 +33,27 @@ class ControllerLoggerListener
 //            $controllerName = 'N/A';
 //        }
 
-        $user= $this->security->getUser();
-        $userName=" ";
-        if($user){
-            $userName=$user->getEmail();
-        }else{
-            $userName="Niezalogowany";
+        $user = $this->security->getUser();
+        $userName = " ";
+        if ($user) {
+            $userName = $user->getEmail();
+        } else {
+            $userName = "Niezalogowany";
         }
 
         $request = $this->requestStack->getCurrentRequest();
-        $url=$request->getRequestUri();
-        $time=date('Y-m-d H:i:s');
+        $url = $request->getRequestUri();
+        $time = date('Y-m-d H:i:s');
 
-        $this->writeToFile([$time,$userName, $url]);
+        $this->writeToFile([$time, $userName, $url]);
     }
 
     public function writeToFile(array $data): void
     {
-        $fileExists=file_exists($this->logFile);
-        $file= fopen($this->logFile, 'a');
-        if(!$fileExists){
-            fputcsv($file, ['Time','User','URL', 'Controller']);
+        $fileExists = file_exists($this->logFile);
+        $file = fopen($this->logFile, 'a');
+        if (!$fileExists) {
+            fputcsv($file, ['Time', 'User', 'URL', 'Controller']);
         }
         fputcsv($file, $data);
         fclose($file);

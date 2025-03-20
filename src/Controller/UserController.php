@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\User;
@@ -8,8 +10,6 @@ use App\Form\ResetPasswordForm;
 use App\Model\PasswordDTO;
 use App\Model\UserDTO;
 use App\Repository\UserRepository;
-
-
 use App\Service\EmailService;
 use App\Token;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,28 +22,33 @@ use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
+
 class UserController extends AbstractController
 {
 
     public function __construct(
-        private UserRepository              $userRepository,
-        private EmailService                $emailService,
-        private UrlGeneratorInterface       $urlGenerator,
+        private UserRepository $userRepository,
+        private EmailService $emailService,
+        private UrlGeneratorInterface $urlGenerator,
         private UserPasswordHasherInterface $passwordHasher,
-        private TokenGeneratorInterface     $tokenGenerator
-    )
-    {
+        private TokenGeneratorInterface $tokenGenerator
+    ) {
     }
 
     #[Route('/register', name: 'registerUser')]
-    public function register(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher, Token $token, EmailService $emailService, UrlGeneratorInterface $urlGenerator): Response
-    {
+    public function register(
+        Request $request,
+        UserRepository $userRepository,
+        UserPasswordHasherInterface $passwordHasher,
+        Token $token,
+        EmailService $emailService,
+        UrlGeneratorInterface $urlGenerator
+    ): Response {
         $userDTO = new UserDTO();
         $form = $this->createForm(RegisterForm::class, $userDTO);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $user = new User(
                 $userDTO->getName(),
                 $userDTO->getSurname(),
@@ -103,8 +108,13 @@ class UserController extends AbstractController
     }
 
     #[Route('/remindPassword', name: 'remindPassword_post', methods: ['POST'])]
-    public function remindPassword(Request $request, UserRepository $userRepository, EmailService $emailService, Token $token, UrlGeneratorInterface $urlGenerator): Response
-    {
+    public function remindPassword(
+        Request $request,
+        UserRepository $userRepository,
+        EmailService $emailService,
+        Token $token,
+        UrlGeneratorInterface $urlGenerator
+    ): Response {
         $email = $request->request->get('email');
         $user = $userRepository->findOneByEmail($email);
         if (!$user) {
@@ -118,7 +128,14 @@ class UserController extends AbstractController
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        $emailService->sendMail($user->getEmail(), 'Resetowanie hasła', $user->getName(), $user->getSurname(), $resetLink, 'email/emailResetPassword.html.twig');
+        $emailService->sendMail(
+            $user->getEmail(),
+            'Resetowanie hasła',
+            $user->getName(),
+            $user->getSurname(),
+            $resetLink,
+            'email/emailResetPassword.html.twig'
+        );
 
         $this->addFlash('success', 'E-mail z instrukcjami resetowania hasła został wysłany.');
         return $this->redirectToRoute('remindPassword');
@@ -130,9 +147,13 @@ class UserController extends AbstractController
         return $this->render('User/restPasswordSuccess.html.twig');
     }
 
-    #[Route('/resetPassword/{token}', name: 'resetPassword',methods: ['GET','POST'])]
-    public function resetPassword(string $token, Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher): Response
-    {
+    #[Route('/resetPassword/{token}', name: 'resetPassword', methods: ['GET', 'POST'])]
+    public function resetPassword(
+        string $token,
+        Request $request,
+        UserRepository $userRepository,
+        UserPasswordHasherInterface $passwordHasher
+    ): Response {
         $user = $userRepository->findOneByToken($token);
 
         if (!$user) {
@@ -172,24 +193,23 @@ class UserController extends AbstractController
         return $this->render('User/resetPassword.html.twig', [
             'form' => $form->createView(),
         ]);
-
     }
 
     #[Route('/userActivity', name: 'userActivity')]
     #[IsGranted('ROLE_USER')]
     public function showUserActivity(): Response
     {
-        $path="C:/xampp/htdocs/MoneyConverter/var/data/data.csv";
-        $data=[];
-        if(file_exists($path)){
-            $file=fopen($path,"r");
-            while(($row=fgetcsv($file,1000,','))!==false ){
-                $data[]=$row;
+        $path = "C:/xampp/htdocs/MoneyConverter/var/data/data.csv";
+        $data = [];
+        if (file_exists($path)) {
+            $file = fopen($path, "r");
+            while (($row = fgetcsv($file, 1000, ',')) !== false) {
+                $data[] = $row;
             }
             fclose($file);
         }
-        return $this->render('User/userActivity.html.twig',[
-            'data'=>$data,
+        return $this->render('User/userActivity.html.twig', [
+            'data' => $data,
         ]);
     }
 
@@ -211,7 +231,9 @@ class UserController extends AbstractController
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+        throw new \LogicException(
+            'This method can be blank - it will be intercepted by the logout key on your firewall.'
+        );
     }
 
 }

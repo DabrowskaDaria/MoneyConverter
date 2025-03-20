@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Currencies;
-use App\Service\EmailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,10 +16,11 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        $currencies=$entityManager->getRepository(Currencies::class)->findAll();
+        $currencies = $entityManager->getRepository(Currencies::class)->findAll();
 
-        return $this->render('home/index.html.twig',[
-            'currencies'=>$currencies,
+        return $this->render('home/index.html.twig', [
+            'currencies' => $currencies,
+            'date' =>$currencies[0]->getCreatedAt()->format('d-m-Y'),
         ]);
     }
 
@@ -26,22 +28,11 @@ class HomeController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function homePageForUser(EntityManagerInterface $entityManager): Response
     {
-        $curencies=$entityManager->getRepository(Currencies::class)->findAll();
-        return $this->render('home/homePageForUsers.html.twig',[
-            'currencies'=>$curencies,
+        $curencies = $entityManager->getRepository(Currencies::class)->findAll();
+        return $this->render('home/homePageForUsers.html.twig', [
+            'currencies' => $curencies,
+            'date' =>$curencies[0]->getCreatedAt()->format('d-m-Y'),
         ]);
-    }
-
-    #[Route('/test-email', name: 'test_email')]
-    public function testEmail(EmailService $emailService): Response
-    {
-        $emailService->sendMail(
-            'daria.dabrowska@yellows.eu',
-            'Testowy e-mail',
-            '<p>To jest testowy e-mail wysłany z Symfony.</p>'
-        );
-
-        return new Response('E-mail został wysłany!');
     }
 
 

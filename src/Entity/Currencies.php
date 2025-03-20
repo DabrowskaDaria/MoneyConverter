@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 
 
 #[ORM\Entity]
@@ -26,6 +27,9 @@ class Currencies
 
     #[ORM\Column(type: 'float')]
     private float $spread;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private \DateTime $createdAt;
 
     /**
      * @return mixed
@@ -106,6 +110,18 @@ class Currencies
     {
         $this->spread = $spread;
     }
+
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTime $createdAt): void
+    {
+        $this->createdAt = $createdAt;
+    }
+
+
 
 
 }

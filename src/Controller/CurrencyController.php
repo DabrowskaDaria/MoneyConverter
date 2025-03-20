@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Currencies;
@@ -15,22 +17,22 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class CurrencyController extends AbstractController
 {
     #[Route('/addCurrency', name: 'add_currency')]
-    public function addCurrencies(EntityManagerInterface $entityManager) : Response
+    public function addCurrencies(EntityManagerInterface $entityManager): Response
     {
-        $currenciesData=[
-            ['name'=>'EUR','buyRate'=>4.107,'sellRate'=>4.190],
-            ['name'=>'CZK','buyRate'=>0.164,'sellRate'=>0.167],
-            ['name'=>'AUD','buyRate'=>2.450,'sellRate'=>2.499],
-            ['name'=>'USD','buyRate'=>3.945,'sellRate'=>4.025],
-            ['name'=>'CHF','buyRate'=>4.372,'sellRate'=>4.460],
+        $currenciesData = [
+            ['name' => 'EUR', 'buyRate' => 4.107, 'sellRate' => 4.190],
+            ['name' => 'CZK', 'buyRate' => 0.164, 'sellRate' => 0.167],
+            ['name' => 'AUD', 'buyRate' => 2.450, 'sellRate' => 2.499],
+            ['name' => 'USD', 'buyRate' => 3.945, 'sellRate' => 4.025],
+            ['name' => 'CHF', 'buyRate' => 4.372, 'sellRate' => 4.460],
         ];
 
-        foreach($currenciesData as $currencyData){
-            $currency= new Currencies();
+        foreach ($currenciesData as $currencyData) {
+            $currency = new Currencies();
             $currency->setName($currencyData['name']);
             $currency->setBuyRate($currencyData['buyRate']);
             $currency->setSellRate($currencyData['sellRate']);
-            $rateDifference = round($currencyData['sellRate'] - $currencyData['buyRate'],3);
+            $rateDifference = round($currencyData['sellRate'] - $currencyData['buyRate'], 3);
             $currency->setSpread($rateDifference);
             $entityManager->persist($currency);
         }
@@ -42,48 +44,50 @@ class CurrencyController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function exchangeXtoPLN(CurrencyRepository $currencyRepository): Response
     {
-        $currenciesName=$currencyRepository->findAllCurrenciesName();
-        return $this->render('exchangeMoney/exchangeXtoPLN.html.twig',[
-            'currenciesName'=>$currenciesName]);
+        $currenciesName = $currencyRepository->findAllCurrenciesName();
+        return $this->render('exchangeMoney/exchangeXtoPLN.html.twig', [
+            'currenciesName' => $currenciesName
+        ]);
     }
 
     #[Route('/exchangePLNtoX', name: 'exchangePLNtoX')]
     #[IsGranted('ROLE_USER')]
     public function exchangePLNtoX(CurrencyRepository $currencyRepository): Response
     {
-        $currenciesName=$currencyRepository->findAllCurrenciesName();
-        return $this->render('exchangeMoney/exchangePLNtoX.html.twig',[
-            'currenciesName'=>$currenciesName]);
+        $currenciesName = $currencyRepository->findAllCurrenciesName();
+        return $this->render('exchangeMoney/exchangePLNtoX.html.twig', [
+            'currenciesName' => $currenciesName
+        ]);
     }
 
     #[Route('/currencySellRate', name: 'currencySellRate', methods: ['GET'])]
-    public function getCurrencySellRate(Request $request, CurrencyRepository $currencyRepository) : JsonResponse
+    public function getCurrencySellRate(Request $request, CurrencyRepository $currencyRepository): JsonResponse
     {
-       $currency=$request->get('currency');
-       if(!$currency){
-           return $this->json(['error' => 'Brak waluty'],400);
-       }
-       $currencyByName=$currencyRepository->findOneBy(['name'=>$currency]);
-       if(!$currencyByName){
-           return $this->json(['error' => 'Waluta nie znaleziona'],404);
-       }
+        $currency = $request->get('currency');
+        if (!$currency) {
+            return $this->json(['error' => 'Brak waluty'], 400);
+        }
+        $currencyByName = $currencyRepository->findOneBy(['name' => $currency]);
+        if (!$currencyByName) {
+            return $this->json(['error' => 'Waluta nie znaleziona'], 404);
+        }
 
-       return $this->json([
-           'currency' => $currencyByName->getName(),
-           'sellRate'=>$currencyByName->getSellRate(),
-           ]);
+        return $this->json([
+            'currency' => $currencyByName->getName(),
+            'sellRate' => $currencyByName->getSellRate(),
+        ]);
     }
 
     #[Route('/currencyBuyRate', name: 'currencyBuyRate', methods: ['GET'])]
-    public function getCurrencyBuyRate(Request $request, CurrencyRepository $currencyRepository) : JsonResponse
+    public function getCurrencyBuyRate(Request $request, CurrencyRepository $currencyRepository): JsonResponse
     {
-        $currency=$request->get('currency');
-        if(!$currency){
-            return $this->json(['error' => 'Brak waluty'],400);
+        $currency = $request->get('currency');
+        if (!$currency) {
+            return $this->json(['error' => 'Brak waluty'], 400);
         }
-        $currencyByName=$currencyRepository->findOneBy(['name'=>$currency]);
-        if(!$currencyByName){
-            return $this->json(['error' => 'Waluta nie znaleziona'],404);
+        $currencyByName = $currencyRepository->findOneBy(['name' => $currency]);
+        if (!$currencyByName) {
+            return $this->json(['error' => 'Waluta nie znaleziona'], 404);
         }
         return $this->json([
             'currency' => $currencyByName->getName(),

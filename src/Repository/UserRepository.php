@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\User;
@@ -21,12 +23,12 @@ class UserRepository extends ServiceEntityRepository
         $entityManager->flush();
     }
 
-    public function findOneByEmail(String $email)
+    public function findOneByEmail(string $email)
     {
         return $this->findOneBy(['email' => $email]);
     }
 
-    public function findOneByToken(String $token)
+    public function findOneByToken(string $token)
     {
         return $this->findOneBy(['token' => $token]);
     }
