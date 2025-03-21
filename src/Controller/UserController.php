@@ -11,14 +11,16 @@ use App\Model\PasswordDTO;
 use App\Model\UserDTO;
 use App\Repository\UserRepository;
 use App\Service\EmailService;
-use App\Token;
+
+
+use App\Service\TokenGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
@@ -26,24 +28,30 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class UserController extends AbstractController
 {
 
+    private string $templateActivationAccount;
+
+    private string $password;
+    private string $token;
+
+    private bool $isActive;
+
     public function __construct(
         private UserRepository $userRepository,
         private EmailService $emailService,
         private UrlGeneratorInterface $urlGenerator,
         private UserPasswordHasherInterface $passwordHasher,
-        private TokenGeneratorInterface $tokenGenerator
+        private TokenGenerator $tokenGenerator,
+        ParameterBagInterface $parameterBag
     ) {
+        $this->templateActivationAccount = $parameterBag->get('templateActivationAccount');
+        $this->password ='';
+        $this->token = '';
+        $this->isActive = false;
     }
 
     #[Route('/register', name: 'registerUser')]
-    public function register(
-        Request $request,
-        UserRepository $userRepository,
-        UserPasswordHasherInterface $passwordHasher,
-        Token $token,
-        EmailService $emailService,
-        UrlGeneratorInterface $urlGenerator
-    ): Response {
+    public function register(Request $request): Response
+    {
         $userDTO = new UserDTO();
         $form = $this->createForm(RegisterForm::class, $userDTO);
         $form->handleRequest($request);
@@ -53,28 +61,28 @@ class UserController extends AbstractController
                 $userDTO->getName(),
                 $userDTO->getSurname(),
                 $userDTO->getEmail(),
-                "",
-                "",
-                false
+                $this->password,
+                $this->token,
+                $this->isActive
             );
             $hashedPassword = $this->passwordHasher->hashPassword($user, $userDTO->getPassword());
             $user->setPassword($hashedPassword);
-            $userRepository->save($user);
-            $token = $token->generateActivationToken($user, $userRepository);
-            $activationLink = $urlGenerator->generate(
+            $this->userRepository->save($user);
+            $token = $this->tokenGenerator->generateActivationToken($user, $this->userRepository);
+            $activationLink = $this->urlGenerator->generate(
                 'activationLink',
                 ['token' => $token],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
-            $template = "email/emailActiveAccount.html.twig";
-            $emailService->sendMail(
-                $user->getEmail(),
-                'Aktywacja konta',
-                $user->getName(),
-                $user->getSurname(),
-                $activationLink,
-                $template
-            );
+            $template = $this->templateActivationAccount;
+            $this->emailService->sendMail([
+                'to' => $user->getEmail(),
+                'subject' => 'Aktywacja konta',
+                'link' => $activationLink,
+                'template' => $template,
+                'name' => $user->getName(),
+                'surname' => $user->getSurname(),
+            ]);
             return $this->redirectToRoute('registerUser');
         }
 
@@ -84,19 +92,19 @@ class UserController extends AbstractController
     }
 
     #[Route('/activateAccount/{token}', name: 'activationLink')]
-    public function activateAccount(string $token, UserRepository $userRepository): Response
+    public function activateAccount(string $token): Response
     {
-        $user = $userRepository->findOneByToken($token);
+        $user = $this->userRepository->findOneByToken($token);
         if ($user->getTokenExpiresAt() > new \DateTime() && $token == $user->getToken()) {
             $user->setToken('');
             $user->setTokenExpiresAt(null);
             $user->setActive(true);
-            $userRepository->save($user);
+            $this->userRepository->save($user);
             return new Response('Aktywowano konto');
         } else {
             $user->setToken('');
             $user->setTokenExpiresAt(null);
-            $userRepository->save($user);
+            $this->userRepository->save($user);
             return new Response('Token jest wygasł lub jest niepoprawny');
         }
     }
@@ -108,27 +116,25 @@ class UserController extends AbstractController
     }
 
     #[Route('/remindPassword', name: 'remindPassword_post', methods: ['POST'])]
-    public function remindPassword(
-        Request $request,
-        UserRepository $userRepository,
-        EmailService $emailService,
-        Token $token,
-        UrlGeneratorInterface $urlGenerator
-    ): Response {
+    public function remindPassword(Request $request): Response
+    {
         $email = $request->request->get('email');
-        $user = $userRepository->findOneByEmail($email);
+        $user = $this->userRepository->findOneByEmail($email);
         if (!$user) {
             $this->addFlash('info', 'Nie znaleziono użytkownika z takim adresem e-mail.');
             return $this->redirectToRoute('remindPassword');
         }
-        $token = $token->generateToken($user, $userRepository);
-        $resetLink = $urlGenerator->generate(
+        $token = $this->tokenGenerator->generateToken();
+        $user->setToken($token);
+        $user->setTokenExpiresAt(new \DateTime('+5 minutes'));
+        $this->userRepository->save($user);
+        $resetLink = $this->urlGenerator->generate(
             'resetPassword',
             ['token' => $token],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        $emailService->sendMail(
+        $this->emailService->sendMail(
             $user->getEmail(),
             'Resetowanie hasła',
             $user->getName(),
@@ -148,22 +154,16 @@ class UserController extends AbstractController
     }
 
     #[Route('/resetPassword/{token}', name: 'resetPassword', methods: ['GET', 'POST'])]
-    public function resetPassword(
-        string $token,
-        Request $request,
-        UserRepository $userRepository,
-        UserPasswordHasherInterface $passwordHasher
-    ): Response {
-        $user = $userRepository->findOneByToken($token);
+    public function resetPassword(string $token, Request $request): Response
+    {
+        $user = $this->userRepository->findOneByToken($token);
 
         if (!$user) {
-            $this->addFlash('error', 'Token jest niepoprawny');
-            return $this->redirectToRoute('resetPassword', ['token' => $token]);
+            return new Response('Token jest niepoprawny');
         }
 
         if ($user->getTokenExpiresAt() < new \DateTime()) {
-            $this->addFlash('error', 'Token wygasł');
-            return $this->redirectToRoute('resetPassword', ['token' => $token]);
+            return new Response('Token jest wygasł lub jest niepoprawny');
         }
 
         $passwordDTO = new PasswordDTO();
@@ -181,10 +181,10 @@ class UserController extends AbstractController
                 return $this->redirectToRoute('resetPassword', ['token' => $token]);
             }
 
-            $user->setPassword($passwordHasher->hashPassword($user, $password));
+            $user->setPassword($this->passwordHasher->hashPassword($user, $password));
             $user->setToken('');
             $user->setTokenExpiresAt(null);
-            $userRepository->save($user);
+            $this->userRepository->save($user);
             $this->addFlash('success', "Hasło zostało zmienione.");
 
             return $this->redirectToRoute('reset_password_success');

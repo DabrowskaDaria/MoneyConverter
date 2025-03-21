@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Currencies;
+use App\Repository\CurrencyRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,10 +15,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class HomeController extends AbstractController
 {
-    #[Route('/', name: 'app_home')]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function __construct(private CurrencyRepository $currencyRepository)
     {
-        $currencies = $entityManager->getRepository(Currencies::class)->findAll();
+    }
+
+    #[Route('/', name: 'app_home')]
+    public function index(): Response
+    {
+        $currencies = $this->currencyRepository->findAll();
 
         return $this->render('home/index.html.twig', [
             'currencies' => $currencies,
@@ -26,9 +32,9 @@ class HomeController extends AbstractController
 
     #[Route('/homePageForUser', name: 'homePageForUser')]
     #[IsGranted('ROLE_USER')]
-    public function homePageForUser(EntityManagerInterface $entityManager): Response
+    public function homePageForUser(): Response
     {
-        $curencies = $entityManager->getRepository(Currencies::class)->findAll();
+        $curencies = $this->currencyRepository->findAll();
         return $this->render('home/homePageForUsers.html.twig', [
             'currencies' => $curencies,
             'date' =>$curencies[0]->getCreatedAt()->format('d-m-Y'),

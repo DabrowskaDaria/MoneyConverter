@@ -51,4 +51,12 @@ class CurrencyRepository extends ServiceEntityRepository
         return $count > 0;
     }
 
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select()
+            ->getQuery()
+            ->getResult();
+    }
+
 }

@@ -18,9 +18,8 @@ class UserRepository extends ServiceEntityRepository
 
     public function save(User $user): void
     {
-        $entityManager = $this->getEntityManager();
-        $entityManager->persist($user);
-        $entityManager->flush();
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
     }
 
     public function findOneByEmail(string $email)

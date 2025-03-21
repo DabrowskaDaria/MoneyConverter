@@ -23,16 +23,6 @@ class ControllerLoggerListener
 
     public function onKernelController(ControllerEvent $event): void
     {
-        //$controller = $event->getController();
-
-//        if (is_array($controller)) {
-//            $controllerName = get_class($controller[0]) . '::' . $controller[1];
-//        } elseif (is_object($controller)) {
-//            $controllerName = get_class((object)$controller);
-//        } else {
-//            $controllerName = 'N/A';
-//        }
-
         $user = $this->security->getUser();
         $userName = " ";
         if ($user) {
