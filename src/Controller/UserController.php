@@ -11,8 +11,6 @@ use App\Model\PasswordDTO;
 use App\Model\UserDTO;
 use App\Repository\UserRepository;
 use App\Service\EmailService;
-
-
 use App\Service\TokenGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -28,12 +26,10 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class UserController extends AbstractController
 {
 
-    private string $templateActivationAccount;
+    private const TEMPLATE_ACTIVATION_ACCOUNT = "email/emailActiveAccount.html.twig";
+    private const TEMPLATE_RESET_PASSWORD = "email/emailResetPassword.html.twig";
+    private string $path;
 
-    private string $password;
-    private string $token;
-
-    private bool $isActive;
 
     public function __construct(
         private UserRepository $userRepository,
@@ -41,12 +37,9 @@ class UserController extends AbstractController
         private UrlGeneratorInterface $urlGenerator,
         private UserPasswordHasherInterface $passwordHasher,
         private TokenGenerator $tokenGenerator,
-        ParameterBagInterface $parameterBag
+        private ParameterBagInterface $parameterBag
     ) {
-        $this->templateActivationAccount = $parameterBag->get('templateActivationAccount');
-        $this->password ='';
-        $this->token = '';
-        $this->isActive = false;
+        $this->path = $this->parameterBag->get('path');
     }
 
     #[Route('/register', name: 'registerUser')]
@@ -61,20 +54,21 @@ class UserController extends AbstractController
                 $userDTO->getName(),
                 $userDTO->getSurname(),
                 $userDTO->getEmail(),
-                $this->password,
-                $this->token,
-                $this->isActive
             );
             $hashedPassword = $this->passwordHasher->hashPassword($user, $userDTO->getPassword());
             $user->setPassword($hashedPassword);
+
+            $token = $this->tokenGenerator->generateToken();
+            $user->setTokenAndTokenExpiresAt($token, '+10 minutes');
             $this->userRepository->save($user);
-            $token = $this->tokenGenerator->generateActivationToken($user, $this->userRepository);
             $activationLink = $this->urlGenerator->generate(
                 'activationLink',
                 ['token' => $token],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
-            $template = $this->templateActivationAccount;
+
+
+            $template = self::TEMPLATE_ACTIVATION_ACCOUNT;
             $this->emailService->sendMail([
                 'to' => $user->getEmail(),
                 'subject' => 'Aktywacja konta',
@@ -95,15 +89,11 @@ class UserController extends AbstractController
     public function activateAccount(string $token): Response
     {
         $user = $this->userRepository->findOneByToken($token);
-        if ($user->getTokenExpiresAt() > new \DateTime() && $token == $user->getToken()) {
-            $user->setToken('');
-            $user->setTokenExpiresAt(null);
-            $user->setActive(true);
+
+        if ($user->hasValidToken($token)) {
             $this->userRepository->save($user);
             return new Response('Aktywowano konto');
         } else {
-            $user->setToken('');
-            $user->setTokenExpiresAt(null);
             $this->userRepository->save($user);
             return new Response('Token jest wygasł lub jest niepoprawny');
         }
@@ -124,23 +114,26 @@ class UserController extends AbstractController
             $this->addFlash('info', 'Nie znaleziono użytkownika z takim adresem e-mail.');
             return $this->redirectToRoute('remindPassword');
         }
+
         $token = $this->tokenGenerator->generateToken();
-        $user->setToken($token);
-        $user->setTokenExpiresAt(new \DateTime('+5 minutes'));
+        $user->setTokenAndTokenExpiresAt($token, '+5 minutes');
         $this->userRepository->save($user);
+
         $resetLink = $this->urlGenerator->generate(
             'resetPassword',
             ['token' => $token],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        $this->emailService->sendMail(
-            $user->getEmail(),
-            'Resetowanie hasła',
-            $user->getName(),
-            $user->getSurname(),
-            $resetLink,
-            'email/emailResetPassword.html.twig'
+        $template = self::TEMPLATE_RESET_PASSWORD;
+        $this->emailService->sendMail([
+                'to' => $user->getEmail(),
+                'subject' => 'Resetowanie hasła',
+                'link' => $resetLink,
+                'template' => $template,
+                'name' => $user->getName(),
+                'surname' => $user->getSurname()
+            ]
         );
 
         $this->addFlash('success', 'E-mail z instrukcjami resetowania hasła został wysłany.');
@@ -162,8 +155,9 @@ class UserController extends AbstractController
             return new Response('Token jest niepoprawny');
         }
 
-        if ($user->getTokenExpiresAt() < new \DateTime()) {
-            return new Response('Token jest wygasł lub jest niepoprawny');
+        if (!$user->hasValidToken($token)) {
+            $this->userRepository->save($user);
+            return new Response('Token wygasł lub jest niepoprawny');
         }
 
         $passwordDTO = new PasswordDTO();
@@ -172,7 +166,6 @@ class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $passwordData = $form->getData();
-
             $password = $passwordData->getPassword();
             $repeatPassword = $passwordData->getRepeatPassword();
 
@@ -182,8 +175,7 @@ class UserController extends AbstractController
             }
 
             $user->setPassword($this->passwordHasher->hashPassword($user, $password));
-            $user->setToken('');
-            $user->setTokenExpiresAt(null);
+            $user->clearToken();
             $this->userRepository->save($user);
             $this->addFlash('success', "Hasło zostało zmienione.");
 
@@ -199,10 +191,10 @@ class UserController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function showUserActivity(): Response
     {
-        $path = "C:/xampp/htdocs/MoneyConverter/var/data/data.csv";
+
         $data = [];
-        if (file_exists($path)) {
-            $file = fopen($path, "r");
+        if (file_exists($this->path)) {
+            $file = fopen($this->path, "r");
             while (($row = fgetcsv($file, 1000, ',')) !== false) {
                 $data[] = $row;
             }

@@ -22,12 +22,12 @@ class UserRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
     }
 
-    public function findOneByEmail(string $email)
+    public function findOneByEmail(string $email): User
     {
         return $this->findOneBy(['email' => $email]);
     }
 
-    public function findOneByToken(string $token)
+    public function findOneByToken(string $token): User
     {
         return $this->findOneBy(['token' => $token]);
     }

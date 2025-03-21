@@ -56,9 +56,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         string $name,
         string $surname,
         string $email,
-        string $password,
-        string $token,
-        bool $active
+        string $password='',
+        string $token='',
+        bool $active=false
     ) {
         $this->name = $name;
         $this->surname = $surname;
@@ -68,6 +68,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->active = $active;
     }
 
+    public function setTokenAndTokenExpiresAt(string $token, string $time): void
+    {
+        $this->token = $token;
+        $this->tokenExpiresAt=new \DateTime($time);
+    }
+
+    public function hasValidToken($token): bool
+    {
+        if ($this->tokenExpiresAt > new \DateTime() && $this->token == $token) {
+            $this->token=('');
+            $this->tokenExpiresAt= null;
+            $this->active=true;
+            return true;
+        } else {
+            $this->clearToken();
+           return false;
+        }
+    }
+
+    public function clearToken() : void
+    {
+        $this->token=('');
+        $this->tokenExpiresAt= null;
+    }
 
     /**
      * @return mixed
