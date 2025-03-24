@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Currencies;
+
 use App\Repository\CurrencyRepository;
-use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
+
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -19,7 +20,7 @@ class HomeController extends AbstractController
     {
     }
 
-    #[Route('/', name: 'app_home')]
+    #[Route('/{_locale}', name: 'app_home')]
     public function index(): Response
     {
         $currencies = $this->currencyRepository->findAll();
@@ -30,7 +31,15 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/homePageForUser', name: 'homePageForUser')]
+    #[Route('/', name: 'home')]
+    public function showHome(): Response
+    {
+       return $this->redirectToRoute('app_home', [
+           '_locale' => 'pl',
+       ]);
+    }
+
+    #[Route('/{_locale}/homePageForUser', name: 'homePageForUser')]
     #[IsGranted('ROLE_USER')]
     public function homePageForUser(): Response
     {
@@ -41,5 +50,11 @@ class HomeController extends AbstractController
         ]);
     }
 
-
+    #[Route('/{_locale}/changeLanguage', name: 'change_language')]
+    public function changeLanguage(Request $request,  SessionInterface $session): Response
+    {
+        $language=$request->get('language');
+        $session->set('_locale', $language);
+        return $this->redirectToRoute('app_home',['_locale'=>$language]);
+    }
 }

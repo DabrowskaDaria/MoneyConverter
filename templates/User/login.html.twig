@@ -10,26 +10,26 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            <h2 class="text-center">Zaloguj się</h2>
+            <h2 class="text-center">{{ 'logIn' | trans }}</h2>
             <form method="post">
             {% if error %}
-                <div class="alert alert-danger">Nieprawidłowy e-mail lub hasło</div>
+                <div class="alert alert-danger">{{ 'errorEmail' | trans }}</div>
             {% endif %}
 
 
             <div class="form-floating">
                 <input type="email" name="_username" value="{{ last_username }}" id="email" class="form-control" placeholder="E-mail">
-                <label for="email">Adres e-mail</label>
+                <label for="email">{{ 'email' | trans }}</label>
             </div>
             <div class="form-floating mt-2">
                 <input type="password" name="_password" id="password" class="form-control" placeholder="Hasło">
-                <label for="password">Hasło</label>
+                <label for="password">{{ 'password' | trans }}</label>
             </div>
             <div class="mt-2">
-                <button type="submit" class="btn btn-register-login-remindPassword">Zaloguj się</button>
+                <button type="submit" class="btn btn-register-login-remindPassword">{{ 'logIn' | trans }}</button>
             </div>
             <div>
-                <a href="{{path('remindPassword')}}" class="btn remindPassword">Przypomnij hasło</a>
+                <a href="{{path('remindPassword')}}" class="btn remindPassword">{{ 'remindPassword' | trans }}</a>
             </div>
             <div>
                 <input type="hidden" name="_csrf_token"

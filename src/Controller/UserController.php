@@ -12,12 +12,13 @@ use App\Model\UserDTO;
 use App\Repository\UserRepository;
 use App\Service\EmailService;
 use App\Service\TokenGenerator;
+use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -42,7 +43,7 @@ class UserController extends AbstractController
         $this->path = $this->parameterBag->get('path');
     }
 
-    #[Route('/register', name: 'registerUser')]
+    #[Route('/{_locale}/register', name: 'registerUser')]
     public function register(Request $request): Response
     {
         $userDTO = new UserDTO();
@@ -85,7 +86,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/activateAccount/{token}', name: 'activationLink')]
+    #[Route('/{_locale}/activateAccount/{token}', name: 'activationLink')]
     public function activateAccount(string $token): Response
     {
         $user = $this->userRepository->findOneByToken($token);
@@ -99,13 +100,13 @@ class UserController extends AbstractController
         }
     }
 
-    #[Route('/remindPassword', name: 'remindPassword', methods: ['GET'])]
+    #[Route('/{_locale}/remindPassword', name: 'remindPassword', methods: ['GET'])]
     public function remindPasswordForm(): Response
     {
         return $this->render('User/remindPassword.html.twig');
     }
 
-    #[Route('/remindPassword', name: 'remindPassword_post', methods: ['POST'])]
+    #[Route('/{_locale}/remindPassword', name: 'remindPassword_post', methods: ['POST'])]
     public function remindPassword(Request $request): Response
     {
         $email = $request->request->get('email');
@@ -140,13 +141,13 @@ class UserController extends AbstractController
         return $this->redirectToRoute('remindPassword');
     }
 
-    #[Route(path: '/resetPassword/success', name: 'reset_password_success', methods: ['GET'])]
+    #[Route(path: '/{_locale}/resetPassword/success', name: 'reset_password_success', methods: ['GET'])]
     public function showRestPasswordSuccess(): Response
     {
         return $this->render('User/restPasswordSuccess.html.twig');
     }
 
-    #[Route('/resetPassword/{token}', name: 'resetPassword', methods: ['GET', 'POST'])]
+    #[Route('/{_locale}/resetPassword/{token}', name: 'resetPassword', methods: ['GET', 'POST'])]
     public function resetPassword(string $token, Request $request): Response
     {
         $user = $this->userRepository->findOneByToken($token);
@@ -187,7 +188,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/userActivity', name: 'userActivity')]
+    #[Route('/{_locale}/userActivity', name: 'userActivity')]
     #[IsGranted('ROLE_USER')]
     public function showUserActivity(): Response
     {
@@ -205,7 +206,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[\Symfony\Component\Routing\Attribute\Route(path: '/login', name: 'app_login')]
+    #[Route(path: '/{_locale}/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         // get the login error if there is one
@@ -220,12 +221,18 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/logout', name: 'app_logout')]
+    #[Route(path: '/{_locale}/logout', name: 'app_logout')]
     public function logout(): void
     {
-        throw new \LogicException(
+        throw new LogicException(
             'This method can be blank - it will be intercepted by the logout key on your firewall.'
         );
+    }
+
+    #[Route(path: '{_locale}/accountManager', name: 'accountManager')]
+    public function showAccountManager(): Response
+    {
+        return $this->render('User/accountManager.html.twig');
     }
 
 }

@@ -4,27 +4,27 @@
     <div class="container justify-content-center mt-4 w-50 ">
         <div class="card">
             <div class="card-body">
-                <h3 class="card-title text-center">Sprzedaj walutę</h3>
+                <h3 class="card-title text-center">{{'sellCurrency' | trans}}</h3>
                 <div class="row">
                     <div class="col-6">
                         <div class="form-floating">
                             <input type="number" class="form-control" id="money" min="1" value="1">
-                            <label for="money">Ilość</label>
+                            <label for="money">{{ 'amount' | trans }}</label>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-floating ">
                             <select class="form-select form-control" id="currency">
-                                <option selected disabled>Wybierz walutę</option>
+                                <option selected disabled>{{ 'chooseCurrency' | trans }}</option>
                                 {% for name in currenciesName %}
                                     <option value="{{ name }}">{{ name }}</option>
                                 {% endfor %}
                             </select>
-                            <label for="currency"> Waluta</label>
+                            <label for="currency"> {{ 'currency' | trans }}</label>
                         </div>
                     </div>
                     <div class="col-12 d-flex justify-content-center mt-2">
-                        <input class="btn btn-calculate" type="submit" value="Oblicz" id="calculate">
+                        <input class="btn btn-calculate" type="submit" value="{{ 'calculate' | trans }}" id="calculate">
                     </div>
                     <div class="col">
                         <p class="card-text fw-bold fs-3 mt-3 text-center" id="result"></p>
@@ -33,7 +33,7 @@
                             const money=parseFloat(document.getElementById('money').value);
                             const currency =document.getElementById('currency').value;
 
-                            fetch(`/currencySellRate?currency=${currency}`)
+                            fetch(`/{_locale}/currencySellRate?currency=${currency}`)
                                 .then(response =>response.json())
                                 .then(data=>{
                                     if(data.error){

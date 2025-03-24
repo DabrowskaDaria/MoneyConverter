@@ -20,8 +20,8 @@
             }
         </style>
 
-        <h2>Witaj, {{ name }} {{ surname }}</h2>
-        <p>Aktywuj swoje konto!</p>
-        <a href="{{ link }}" class="btn-activateAccount">Aktywuj konto</a>
+        <h2>{{ 'hello' | trans }} {{ name }} {{ surname }}</h2>
+        <p>{{ 'activeAccount'  | trans}}</p>
+        <a href="{{ link }}" class="btn-activateAccount">{{ 'activeAccount' | trans }}</a>
     {% endapply %}
 {% endblock %}

@@ -5,15 +5,25 @@
 
     <div class="container d-flex justify-content-center mt-4">
         <div class="d-flex flex-column gap-2 border rounded p-5 shadow w-50" >
-            <h2 class="text-center">Zarejestruj się</h2>
+            <h2 class="text-center">{{ 'register' | trans }}</h2>
 
 
             {{ form_start(form) }}
-            <div class="form-floating">{{ form_row(form.name) }}</div>
-            <div class="form-floating">{{ form_row(form.surname) }}</div>
-            <div class="form-floating">{{ form_row(form.email) }}</div>
-            <div class="form-floating">{{ form_row(form.password)}}</div>
-            <div class="form-floating">{{ form_row(form.submit) }}</div>
+            <div class="form-floating">
+                {{ form_row(form.name, {'label': 'form.name' | trans }) }}
+            </div>
+            <div class="form-floating">
+                {{ form_row(form.surname, {'label': 'form.surname' | trans }) }}
+            </div>
+            <div class="form-floating">
+                {{ form_row(form.email,{ 'label': 'form.email' | trans } )}}
+            </div>
+            <div class="form-floating">
+                {{ form_row(form.password,{'label': 'form.password' | trans })}}
+            </div>
+            <div class="form-floating">
+                {{ form_row(form.submit, {'label': 'form.submit' | trans})}}
+            </div>
             {{form_end(form)}}
 
 

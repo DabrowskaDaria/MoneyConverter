@@ -4,27 +4,27 @@
 <div class="container justify-content-center mt-4 w-50">
     <div class="card">
         <div class="card-body">
-            <h3 class="card-title text-center">Kup walutę</h3>
+            <h3 class="card-title text-center">{{ 'buyCurrency' | trans }}</h3>
             <div class="row">
                 <div class="col-6 mt-2">
                     <div class="form-floating">
                         <input type="number" class="form-control" id="money" min="1" value="1">
-                        <label for="money">Ilość</label>
+                        <label for="money">{{ 'amount' | trans }}</label>
                     </div>
                 </div>
                 <div class="col-6 mt-2">
                     <div class="form-floating">
                         <select class="form-select form-control" id="currency">
-                            <option selected disabled> Wybierz walutę</option>
+                            <option selected disabled> {{'chooseCurrency' | trans}}</option>
                             {% for name in currenciesName %}
                                 <option value="{{ name }}">{{ name }}</option>
                             {% endfor %}
                         </select>
-                        <label for="currency">Waluta</label>
+                        <label for="currency">{{ 'currency' | trans }}</label>
                     </div>
                 </div>
                 <div class="col-12 d-flex justify-content-center mt-2">
-                    <input type="submit" class="btn btn-calculate" value="Oblicz" id="calculate">
+                    <input type="submit" class="btn btn-calculate" value="{{ 'calculate' | trans }}" id="calculate">
                 </div>
                 <div class="col">
                     <p class="text-center mt-2" id="result"></p>

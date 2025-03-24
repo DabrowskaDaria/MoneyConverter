@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Currencies;
 use App\Repository\CurrencyRepository;
-use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +19,7 @@ class CurrencyController extends AbstractController
     }
 
 
-    #[Route('/exchangeXtoPLN', name: 'exchangeXtoPLN')]
+    #[Route('/{_locale}/exchangeXtoPLN', name: 'exchangeXtoPLN')]
     #[IsGranted('ROLE_USER')]
     public function exchangeXtoPLN(): Response
     {
@@ -32,7 +29,7 @@ class CurrencyController extends AbstractController
         ]);
     }
 
-    #[Route('/exchangePLNtoX', name: 'exchangePLNtoX')]
+    #[Route('/{_locale}/exchangePLNtoX', name: 'exchangePLNtoX')]
     #[IsGranted('ROLE_USER')]
     public function exchangePLNtoX(): Response
     {
@@ -42,7 +39,7 @@ class CurrencyController extends AbstractController
         ]);
     }
 
-    #[Route('/currencySellRate', name: 'currencySellRate', methods: ['GET'])]
+    #[Route('/{_locale}/currencySellRate', name: 'currencySellRate', methods: ['GET'])]
     public function getCurrencySellRate(Request $request): JsonResponse
     {
         $currency = $request->get('currency');
@@ -60,7 +57,7 @@ class CurrencyController extends AbstractController
         ]);
     }
 
-    #[Route('/currencyBuyRate', name: 'currencyBuyRate', methods: ['GET'])]
+    #[Route('/{_locale}/currencyBuyRate', name: 'currencyBuyRate', methods: ['GET'])]
     public function getCurrencyBuyRate(Request $request): JsonResponse
     {
         $currency = $request->get('currency');

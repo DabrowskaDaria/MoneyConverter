@@ -6,7 +6,7 @@
 
     {% include 'includes/headerUser.html.twig' %}
     <div class="container d-flex justify-content-center mt-4">
-        <h3 class="mx-2">Wymiana walut: </h3>
+        <h3 class="mx-2">{{'exchange' | trans}} </h3>
         <a href="{{ path('exchangeXtoPLN') }}" class="btn btn-exchange mx-2">X -> PLN</a>
         <a href="{{path('exchangePLNtoX')}}" class="btn btn-exchange mx-2">PLN -> X</a>
     </div>
