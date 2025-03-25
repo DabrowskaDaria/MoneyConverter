@@ -11,7 +11,12 @@
             </div>
 
             <div class="ms-auto d-flex align-items-center gap-2">
-                <i class="fa-regular fa-circle-user fa-xl"></i>
+                {% if app.user and app.user.image %}
+                    <img class=" user-image" src="{{ asset(app.user.image) }}" alt="Uploaded photo">
+                    {% else %}
+                        <i class="fa-regular fa-circle-user fa-xl"></i>
+                {% endif %}
+
                 <h3 class="mb-0">{{ 'hello' | trans }}</h3>
             </div>
 

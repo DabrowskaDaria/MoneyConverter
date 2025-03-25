@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\LoadImageForm;
 use App\Form\RegisterForm;
 use App\Form\ResetPasswordForm;
 use App\Model\PasswordDTO;
@@ -192,7 +193,6 @@ class UserController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function showUserActivity(): Response
     {
-
         $data = [];
         if (file_exists($this->path)) {
             $file = fopen($this->path, "r");
@@ -230,9 +230,40 @@ class UserController extends AbstractController
     }
 
     #[Route(path: '{_locale}/accountManager', name: 'accountManager')]
-    public function showAccountManager(): Response
+    public function showAccountManager(Request $request): Response
     {
-        return $this->render('User/accountManager.html.twig');
+        $form = $this->createForm(LoadImageForm::class);
+        $form->handleRequest($request);
+        $user = $this->getUser();
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $clickedButton = $form->getClickedButton();
+
+            if ($clickedButton->getName() == 'remove') {
+                $imagePath = $this->getParameter('kernel.project_dir') . '/public/' . $user->getImage();
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+                $user->setImage('');
+                $this->userRepository->save($user);
+                return $this->redirectToRoute('accountManager');
+            }
+
+            $file = $form->get('image')->getData();
+            if ($clickedButton->getName() == 'save') {
+                $storageDir = $this->getParameter('kernel.project_dir') . '/public/images';
+                $fileName = uniqid() . '.' . $file->guessExtension();
+                $file->move($storageDir, $fileName);
+                $path = 'images/' . $fileName;
+
+                $user->setImage($path);
+                $this->userRepository->save($user);
+                return $this->redirectToRoute('accountManager', ['pathImage' => $path]);
+            }
+        }
+        return $this->render('User/accountManager.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
 }

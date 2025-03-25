@@ -14,6 +14,8 @@ form:
   submit: 'Zarejestruj się'
   repeatPassword: 'Powtórz hasło'
   newPassword: 'Ustaw nowe hasło'
+  removeImage: 'Usuń zdjęcie'
+  saveImage: 'Zapisz zdjęcie'
 logIn: 'Zaloguj się'
 errorEmail: 'Nieprawidłowy e-mail lub hasło'
 email: 'Email'
@@ -39,5 +41,6 @@ logOut: 'Wyloguj się'
 loadImage: 'Załaduj zdjęcie'
 remove: 'Usuń'
 save: 'Zapisz'
+chooseImage: 'Wybierz obraz'
 
 

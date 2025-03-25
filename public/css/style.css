@@ -76,10 +76,7 @@ label{
     width: 100%;
     border-radius: 10px;
 }
- img{
-     width: 200px;
-     height: 300px;
- }
+
 
  .btn-submit{
      background-color: #b399f4;
@@ -103,4 +100,10 @@ label{
 
 .btn-language:hover{
     background-color: #eae5fa;
+}
+
+.user-image {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
 }
