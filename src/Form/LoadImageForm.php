@@ -4,10 +4,10 @@ namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class LoadImageForm extends AbstractType
 {
@@ -16,16 +16,18 @@ class LoadImageForm extends AbstractType
             ->add('image', FileType::class, [
                 'label' => 'chooseImage',
                 'mapped' => false,
-                'required' => false,
-                'attr' => ['class' => "form-control"]
+                'required' => true,
+                'attr' => ['class' => "form-control"],
+                'constraints' => [
+                    new File([
+                        'mimeTypes' => ['image/jpeg', 'image/png'],
+                        'mimeTypesMessage' => 'Please upload a valid image file',
+                    ])
+                ]
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'loadImage',
-                'attr' => ['class' => 'btn-submit']
-            ])
-            ->add('remove', SubmitType::class, [
-                'label' => 'Usuń obraz',
-                'attr' => ['class' => 'btn-submit']
+                'attr' => ['class' => 'btn btn-submit mt-2']
             ]);
     }
 

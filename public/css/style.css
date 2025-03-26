@@ -107,3 +107,14 @@ label{
     height: 40px;
     object-fit: cover;
 }
+
+.btn-pdf{
+    background-color: #c7b6f3;
+    width: 300px;
+    border-radius: 10px;
+    height: 40px;
+}
+
+.btn-pdf:hover{
+    background-color: #dbcbfa;
+}

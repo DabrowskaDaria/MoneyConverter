@@ -6,6 +6,8 @@
 parameters:
     addresEmail: 'daria.dabrowska@yellows.eu'
     path: "%kernel.project_dir%/var/data/data.csv"
+    imagePath: "%kernel.project_dir%/public/"
+    storageDir: "%kernel.project_dir%/public/images"
     locale: 'pl'
 services:
 

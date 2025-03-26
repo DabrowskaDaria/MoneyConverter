@@ -7,11 +7,13 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\LoadImageForm;
 use App\Form\RegisterForm;
+use App\Form\RemoveImageForm;
 use App\Form\ResetPasswordForm;
 use App\Model\PasswordDTO;
 use App\Model\UserDTO;
 use App\Repository\UserRepository;
 use App\Service\EmailService;
+use App\Service\ImageService;
 use App\Service\TokenGenerator;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,7 +41,8 @@ class UserController extends AbstractController
         private UrlGeneratorInterface $urlGenerator,
         private UserPasswordHasherInterface $passwordHasher,
         private TokenGenerator $tokenGenerator,
-        private ParameterBagInterface $parameterBag
+        private ParameterBagInterface $parameterBag,
+        private ImageService $imageService,
     ) {
         $this->path = $this->parameterBag->get('path');
     }
@@ -229,40 +232,76 @@ class UserController extends AbstractController
         );
     }
 
-    #[Route(path: '{_locale}/accountManager', name: 'accountManager')]
-    public function showAccountManager(Request $request): Response
+    #[Route(path: '/{_locale}/accountManager/removeImage', name: 'removeImage')]
+    #[IsGranted('ROLE_USER')]
+    public function removeImage(Request $request): Response
+    {
+        $form = $this->createForm(RemoveImageForm::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if(!empty($this->getUser()->getImage())){
+                $this->imageService->removeImage(
+                    $this->getUser()
+                );
+            }
+
+        }
+
+        return $this->redirectToRoute('accountManager');
+    }
+
+    #[Route(path: '/{_locale}/accountManager/saveImage', name: 'saveImage')]
+    #[IsGranted('ROLE_USER')]
+    public function saveImage(Request $request): Response
     {
         $form = $this->createForm(LoadImageForm::class);
         $form->handleRequest($request);
-        $user = $this->getUser();
-
         if ($form->isSubmitted() && $form->isValid()) {
-            $clickedButton = $form->getClickedButton();
-
-            if ($clickedButton->getName() == 'remove') {
-                $imagePath = $this->getParameter('kernel.project_dir') . '/public/' . $user->getImage();
-                if (file_exists($imagePath)) {
-                    unlink($imagePath);
-                }
-                $user->setImage('');
-                $this->userRepository->save($user);
-                return $this->redirectToRoute('accountManager');
+            try{
+                $path=$this->imageService->saveImage($this->getUser(), $form->get('image')->getData());
+                return $this->redirectToRoute('accountManager',['pathImage' => $path]);
+            }catch (\Exception $e){
+                $this->addFlash('error', $e->getMessage());
             }
 
-            $file = $form->get('image')->getData();
-            if ($clickedButton->getName() == 'save') {
-                $storageDir = $this->getParameter('kernel.project_dir') . '/public/images';
-                $fileName = uniqid() . '.' . $file->guessExtension();
-                $file->move($storageDir, $fileName);
-                $path = 'images/' . $fileName;
-
-                $user->setImage($path);
-                $this->userRepository->save($user);
-                return $this->redirectToRoute('accountManager', ['pathImage' => $path]);
-            }
         }
+        return $this->redirectToRoute('accountManager');
+    }
+
+    #[Route(path: '{_locale}/accountManager', name: 'accountManager')]
+    #[IsGranted('ROLE_USER')]
+    public function showAccountManager(Request $request): Response
+    {
+        $form = $this->createForm(RemoveImageForm::class, null, [
+            'action' => $this->urlGenerator->generate('removeImage')
+        ]);
+
+        $form1 = $this->createForm(LoadImageForm::class, null, [
+            'action' => $this->urlGenerator->generate('saveImage')
+        ]);
+
+//        $form->handleRequest($request);
+//        $user = $this->getUser();
+//
+//        if ($form->isSubmitted() && $form->isValid()) {
+//            $clickedButton = $form->getClickedButton();
+//
+//            if ($clickedButton->getName() == 'remove') {
+//                $this->imageService->removeImage($user);
+//                return $this->redirectToRoute('accountManager');
+//            }
+//
+//            $file = $form->get('image')->getData();
+//            if ($clickedButton->getName() == 'save') {
+//                $this->imageService->saveImage($user, $file);
+//                return $this->redirectToRoute('accountManager', ['pathImage' => $path]);
+//            }
+//        }
         return $this->render('User/accountManager.html.twig', [
             'form' => $form->createView(),
+            'form1' => $form1->createView(),
         ]);
     }
 

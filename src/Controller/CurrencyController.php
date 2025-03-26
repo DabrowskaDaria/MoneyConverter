@@ -40,6 +40,7 @@ class CurrencyController extends AbstractController
     }
 
     #[Route('/{_locale}/currencySellRate', name: 'currencySellRate', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function getCurrencySellRate(Request $request): JsonResponse
     {
         $currency = $request->get('currency');
@@ -58,6 +59,7 @@ class CurrencyController extends AbstractController
     }
 
     #[Route('/{_locale}/currencyBuyRate', name: 'currencyBuyRate', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function getCurrencyBuyRate(Request $request): JsonResponse
     {
         $currency = $request->get('currency');

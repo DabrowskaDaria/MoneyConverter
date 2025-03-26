@@ -42,5 +42,7 @@ loadImage: 'Załaduj zdjęcie'
 remove: 'Usuń'
 save: 'Zapisz'
 chooseImage: 'Wybierz obraz'
+generatedDate: 'Wygenerowano dnia: '
+reportTitle: 'Raport aktywnosci uzytkownika'
 
 

@@ -14,13 +14,17 @@
                     {% endif %}
                 </div>
 
-                {{ form_start(form) }}
+                {{ form_start(form1) }}
                     <div class="row">
-                        <div class="col-12">{{ form_row(form.image) }} </div>
-                        <div class="col-6 mt-2">{{ form_row(form.remove, {'label': 'form.removeImage' | trans }) }}</div>
-                        <div class="col-6 mt-2">{{ form_row(form.save, {'label': 'form.saveImage' | trans }) }}</div>
-                    </div>
+                        <div class="col-12">
+                            {{ form_row(form1.image) }}
+                        </div>
+                        {{ form_row(form1.save, {'label': 'form.saveImage' | trans }) }}
+                {{ form_end(form1) }}
+                {{ form_start(form) }}
+                        {{ form_row(form.remove, {'label': 'form.removeImage' | trans }) }}
                 {{ form_end(form) }}
+                    </div>
             </div>
         </div>
     </div>

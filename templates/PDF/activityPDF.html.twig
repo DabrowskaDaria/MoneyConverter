@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-{% include'includes/headerUser.html.twig' %}
-    <div class="container justify-content-center mt-4">
-        <a href="{{ path('pdf',{'_locale': app.request.locale}) }}" class="btn btn-pdf mt-2 mb-3">Pobierz raport aktywności</a>
-        <table class="table table-bordered table-hover rounded">
-            <thead class="table-header">
+    <div>
+        <h2 style="text-align: center;">{{ 'reportTitle' | trans }}</h2>
+        <h4 style="text-align: right; color: grey;">{{ 'generatedDate' | trans }} {{ today }}</h4>
+        <table border=1 style="border-collapse: collapse; padding: 5px;">
+            <thead style="background-color: #dbcbfa;">
             <tr>
                 <th>ID</th>
                 <th>{{ 'time' | trans }}</th>
